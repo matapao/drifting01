@@ -1,0 +1,12 @@
+{
+  "name": "drifting01",
+  "short_name": "drifting01",
+  "description": "Drift Sogn Motorsportklubb's track at Kaupangerskogen.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#14171a",
+  "theme_color": "#14171a",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

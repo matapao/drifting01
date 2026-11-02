@@ -1,0 +1,17 @@
+node_modules
+dist
+*.tgz
+*.log
+.DS_Store
+.claude
+
+# Source models, and the model cars packed from them: licensed for use inside the game only.
+*.fbx
+!src/assets/car/retro-car.fbx
+*.obj
+*.blend
+*.rar
+src/assets/cars/*.car
+
+# The single-file version this was rewritten from.
+drifting01.html

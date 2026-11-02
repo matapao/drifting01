@@ -1,0 +1,22 @@
+{
+  "name": "drifting01",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc",
+    "bundle": "npm run build && node tools/zirbel-bundle.mjs"
+  },
+  "dependencies": {
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "meshoptimizer": "^1.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}

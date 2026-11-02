@@ -1,0 +1,79 @@
+{
+  "id": "drifting01",
+  "version": "0.1.0",
+  "title": "DRIFTING01",
+  "tagline": "Drift Sogn Motorsportklubb's track at Kaupangerskogen.",
+  "players": { "min": 1, "max": 1 },
+  "entry": "index.html",
+  "runsOn": "Phones, tablets and computers",
+  "orientation": "landscape",
+  "madeBy": { "name": "bestrand", "url": "https://github.com/bestrand" },
+  "source": "https://github.com/matapao/drifting01",
+  "license": "MIT",
+  "stage": "alpha",
+  "credits": [
+    {
+      "slot": "3D engine",
+      "artist": "three.js authors",
+      "work": "three.js r186",
+      "url": "https://threejs.org",
+      "license": "MIT"
+    },
+    {
+      "slot": "Pro-am car",
+      "artist": "Bricchi Games",
+      "work": "Retro Car With Interior (PSX asset)",
+      "url": "https://bricchi-games.itch.io/retro-car-with-interior",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "slot": "AE86 model",
+      "artist": "raddysa71arxi",
+      "work": "1986 Toyota Sprinter Trueno AE86 From Initial D",
+      "url": "https://www.cgtrader.com/free-3d-models/car/antique-car/1986-toyota-sprinter-trueno-ae86-from-initial-d",
+      "license": "CGTrader Royalty Free"
+    },
+    {
+      "slot": "R32 model",
+      "artist": "13lue",
+      "work": "Nissan Skyline R32 GTR",
+      "url": "https://www.cgtrader.com/free-3d-models/car/sport-car/nissan-skyline-r32-gtr-d4a3090d-61b3-4e1b-881b-9008ea7b7880",
+      "license": "CGTrader Royalty Free"
+    },
+    {
+      "slot": "E30 model",
+      "artist": "fadhilelouali6",
+      "work": "M3 e30",
+      "url": "https://www.cgtrader.com/3d-models/car/sport-car/m3-e30",
+      "license": "CGTrader Royalty Free"
+    },
+    {
+      "slot": "Track",
+      "artist": "OpenStreetMap contributors",
+      "work": "Way 516158930",
+      "url": "https://www.openstreetmap.org/way/516158930",
+      "license": "ODbL-1.0"
+    },
+    {
+      "slot": "Terrain heights",
+      "artist": "Kartverket",
+      "work": "Terrain model (DTM 1 m)",
+      "url": "https://www.kartverket.no",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "slot": "Car and road graphics",
+      "artist": "Matapao",
+      "work": "derby01",
+      "url": "https://github.com/matapao/derby01",
+      "license": "MIT"
+    }
+  ],
+  "back": [
+    "Drift the real club track at Kaupangerskogen in Sogndal, measured from the map and the terrain model.",
+    "Pick a Pro-am build, an AE86, an R32 or an E30, in stock trim or drift styling.",
+    "Hold the slide through eleven corners and chain the points as the multiplier climbs.",
+    "Drive from behind, from the bonnet, or from the driver's seat with the wheel turning in your hands.",
+    "Play with keys or touch, with the phone held sideways."
+  ]
+}

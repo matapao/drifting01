@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>drifting01</title>
+<meta name="theme-color" content="#14171a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="drifting01">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600&family=Saira+Semi+Condensed:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="view" aria-label="drifting01 3D view"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" hidden>
+    <div class="hud-top">
+      <section class="panel timing" aria-label="Lap timing">
+        <div class="row"><span class="lbl">Lap</span><span id="lapNo" class="num">1</span></div>
+        <div class="big num" id="lapTime">0:00.000</div>
+        <div class="row"><span class="lbl">Best</span><span id="bestLap" class="num">–</span></div>
+        <div class="row"><span class="lbl">Last</span><span id="lastLap" class="num">–</span></div>
+      </section>
+
+      <section class="drift" aria-live="polite">
+        <div id="driftBox" class="drift-box">
+          <div class="drift-pts num" id="driftPts">0</div>
+          <div class="drift-mult num" id="driftMult">×1</div>
+        </div>
+        <div class="angle-meter" aria-hidden="true">
+          <div class="angle-track"><div id="angleFill" class="angle-fill"></div></div>
+          <span id="angleTxt" class="num">0°</span>
+        </div>
+        <div id="toast" class="toast"></div>
+      </section>
+
+      <section class="panel score" aria-label="Score">
+        <div class="row"><span class="lbl">Lap pts</span><span id="lapScore" class="num">0</span></div>
+        <div class="row"><span class="lbl">Best pts</span><span id="bestScore" class="num">–</span></div>
+        <canvas id="minimap" width="120" height="170" aria-label="Track map"></canvas>
+      </section>
+    </div>
+
+    <div class="hud-btns">
+      <button id="btnPause" class="chip" type="button" aria-label="Pause">II</button>
+      <button id="btnCam" class="chip" type="button" aria-label="Change camera">CAM</button>
+      <button id="btnReset" class="chip" type="button" aria-label="Back on track">↺</button>
+    </div>
+
+    <section class="dash" aria-label="Speed and gear">
+      <div class="speed num"><span id="speed">0</span><small>km/h</small></div>
+      <div class="gear num" id="gear">1</div>
+      <div class="rpm"><div id="rpmFill" class="rpm-fill"></div><div class="rpm-red"></div></div>
+    </section>
+
+    <!-- touch -->
+    <div id="touch" class="touch" hidden>
+      <div id="steerPad" class="steer-pad">
+        <div class="steer-rail"><div id="steerKnob" class="steer-knob"></div></div>
+        <span class="pad-lbl">Drag to steer</span>
+      </div>
+      <div class="pedals">
+        <button id="tHand" class="pedal hand" type="button">E-BRAKE</button>
+        <button id="tBrake" class="pedal brake" type="button">BRAKE</button>
+        <button id="tGas" class="pedal gas" type="button">GAS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu -->
+  <div id="menu" class="menu">
+    <div class="menu-card">
+      <div class="menu-main">
+      <header class="brand">
+        <h1>drifting<span>01</span></h1>
+        <p class="tag">Sogn Motorsportklubb's drift track at Kaupangerskogen: 479 m of asphalt, eleven corners, 5 m of climb. Hold the slide and chain the points.</p>
+      </header>
+
+      <div class="facts" aria-label="Track facts">
+        <div><span class="lbl">Lap</span><b id="factLen" class="num">– m</b></div>
+        <div><span class="lbl">Corners</span><b class="num">11</b></div>
+        <div><span class="lbl">Width</span><b id="factWidth" class="num">– m</b></div>
+        <div><span class="lbl">Car</span><b id="factCar" class="num">– m</b></div>
+      </div>
+
+      <div class="field">
+        <span class="lbl" id="carLbl">Car</span>
+        <div class="cars" role="radiogroup" aria-labelledby="carLbl" id="cars"></div>
+        <p id="carBlurb" class="car-blurb"></p>
+      </div>
+      </div>
+
+      <div class="menu-side">
+      <div class="field-row">
+        <div class="field">
+          <span class="lbl" id="lookLbl">Look</span>
+          <div class="looks" role="radiogroup" aria-labelledby="lookLbl" id="looks"></div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="colLbl">Car colour</span>
+          <div class="swatches" role="radiogroup" aria-labelledby="colLbl" id="swatches"></div>
+        </div>
+      </div>
+
+      <div class="toggles">
+        <label class="tog"><input id="optAssist" type="checkbox" checked> <span>Countersteer assist</span></label>
+        <label class="tog"><input id="optSound" type="checkbox" checked> <span>Sound</span></label>
+        <label class="tog"><input id="optShadows" type="checkbox" checked> <span>Shadows</span></label>
+      </div>
+
+      <button id="btnStart" class="start" type="button" disabled>Loading…</button>
+      <p id="loadMsg" class="load-msg" role="status"></p>
+      <p class="sideways-hint">Turn your phone sideways to drive.</p>
+      </div>
+
+      <details class="help">
+        <summary>Controls</summary>
+        <dl>
+          <dt>Keyboard</dt><dd>W / ↑ gas · S / ↓ brake, reverse · A D / ← → steer · Space e-brake · C camera (chase, far chase, inside, bonnet, overhead) · R back on track · P pause</dd>
+          <dt>Touch</dt><dd>Hold the phone sideways · Drag left thumb sideways to steer · Gas, brake and e-brake on the right</dd>
+          <dt>Scoring</dt><dd>Points grow with slip angle and speed. Keep the slide going to raise the multiplier. A wall hit or leaving the asphalt drops the chain.</dd>
+        </dl>
+      </details>
+
+      <p class="credits">Cars: Pro-am is “Retro Car With Interior (PSX asset)” by <a href="https://bricchi-games.itch.io/retro-car-with-interior" target="_blank" rel="noopener">Bricchi Games</a>, CC BY 4.0. AE86 is “1986 Toyota Sprinter Trueno AE86 From Initial D” by <a href="https://www.cgtrader.com/free-3d-models/car/antique-car/1986-toyota-sprinter-trueno-ae86-from-initial-d" target="_blank" rel="noopener">raddysa71arxi</a>, R32 is “Nissan Skyline R32 GTR” by <a href="https://www.cgtrader.com/free-3d-models/car/sport-car/nissan-skyline-r32-gtr-d4a3090d-61b3-4e1b-881b-9008ea7b7880" target="_blank" rel="noopener">13lue</a> and E30 is “M3 e30” by <a href="https://www.cgtrader.com/3d-models/car/sport-car/m3-e30" target="_blank" rel="noopener">fadhilelouali6</a>, all three under the CGTrader Royalty Free licence. Car and road graphics adapted from <a href="https://github.com/matapao/derby01" target="_blank" rel="noopener">derby01</a> (MIT). Track: Sogn Motorsportklubb's drift track at Kaupangerskogen, measured from <a href="https://www.openstreetmap.org/way/516158930" target="_blank" rel="noopener">OpenStreetMap</a> (© OpenStreetMap contributors, ODbL) and Esri World Imagery; heights © Kartverket (CC BY 4.0).</p>
+    </div>
+  </div>
+
+  <div id="rotate" class="rotate" role="dialog" aria-labelledby="rotateTitle" hidden>
+    <div class="rotate-card">
+      <div class="rotate-phone" aria-hidden="true"><span></span></div>
+      <p id="rotateTitle" class="rotate-title">Turn your phone sideways</p>
+      <p class="rotate-note">The track needs the width. If the screen won't turn, switch off rotation lock.</p>
+      <button id="btnUpright" class="chip" type="button">Drive upright anyway</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
