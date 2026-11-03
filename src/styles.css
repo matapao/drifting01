@@ -80,18 +80,58 @@ body {
 .toast.show { opacity: 1; transform: none; }
 .toast.bad { color: var(--kerb); }
 
-.hud-btns {
-  position: absolute; display: flex; gap: 8px; pointer-events: auto;
-  top: calc(10px + env(safe-area-inset-top, 0px));
-  left: 50%; transform: translateX(-50%);
-  margin-top: 118px;
-}
 .chip {
   font: 600 0.8rem var(--f-body); letter-spacing: 0.1em;
   color: var(--ink); background: var(--glass); border: 1px solid var(--line);
   border-radius: 6px; padding: 6px 10px; min-width: 40px; cursor: pointer;
 }
 .chip:focus-visible, .start:focus-visible, .pedal:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ---------- Corners: back on the left, the menu on the right ---------- */
+.topbar {
+  --corner-top: calc(10px + env(safe-area-inset-top, 0px));
+  position: absolute; z-index: 5; top: 0; left: 0; right: 0; pointer-events: none;
+  display: flex; align-items: flex-start;
+  padding-top: var(--corner-top);
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
+}
+.round {
+  pointer-events: auto; display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  color: var(--ink); background: var(--glass); border: 1px solid var(--line); border-radius: 50%; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.round svg { width: 22px; height: 22px; }
+.round:hover { border-color: rgba(242, 240, 234, 0.45); }
+.round[aria-expanded="true"] { color: var(--tarmac); background: var(--ink); }
+.round:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.topbar-menu { position: relative; margin-left: auto; }
+.sheet {
+  pointer-events: auto; position: absolute; top: calc(100% + 8px); right: 0; min-width: 220px;
+  display: flex; flex-direction: column; padding: 6px;
+  background: rgba(20, 23, 26, 0.94); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.sheet-item {
+  display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 12px;
+  font: 600 1rem var(--f-body); color: var(--ink); text-align: left; cursor: pointer;
+  background: transparent; border: 0; border-radius: 7px;
+}
+.sheet-item + .sheet-item { margin-top: 2px; }
+.sheet-item:hover, .sheet-item:focus-visible { background: rgba(242, 240, 234, 0.1); outline: none; }
+.sheet-item span { color: var(--signal); }
+.sheet-item kbd {
+  margin-left: auto; padding: 2px 6px; font: 600 0.72rem var(--f-body); color: var(--ink-dim);
+  border: 1px solid var(--line); border-radius: 4px;
+}
+body.touch-on .sheet-item kbd { display: none; }
+body:not(.playing) .play-only { display: none; }
+body:not(.playing):not(.on-zirbel) #btnMenu { display: none; }
+/* zirbel's own bar: the corners stand in for it, and its buttons are pressed from there. */
+.game-tools-dock { display: none !important; }
+/* The HUD panels and the menu card keep clear of the corner buttons. */
+.hud-top { padding-right: calc(max(12px, env(safe-area-inset-right, 0px)) + 54px); }
+body.on-zirbel .hud-top { padding-left: calc(max(12px, env(safe-area-inset-left, 0px)) + 54px); }
 
 .dash {
   position: absolute; right: max(12px, env(safe-area-inset-right, 0px));
@@ -110,20 +150,34 @@ body {
 .rpm-red { position: absolute; inset: 0 0 0 86%; background: var(--kerb); opacity: 0.85; }
 .rpm.limit .rpm-fill { background: var(--signal); }
 
-/* touch controls */
-.touch { position: absolute; inset: auto 0 0 0; height: 46%; pointer-events: none; }
+/* touch controls: thumb-sized, the steering anywhere on the left, the pedals stacked in the right corner */
+.touch {
+  --rail-w: min(340px, 40vw); --rail-h: 72px; --knob: 62px;
+  --gas-w: 112px; --pedal-w: 100px; --pedal-h: 240px;
+  position: absolute; inset: auto 0 0 0; height: 50%; pointer-events: none;
+}
 .steer-pad {
-  position: absolute; left: 0; bottom: 0; width: 50%; height: 100%;
+  position: absolute; left: 0; bottom: 0; width: 50%; height: 100%; touch-action: none;
   pointer-events: auto; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
   padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   padding-left: max(16px, env(safe-area-inset-left, 0px));
 }
 .steer-rail {
-  width: min(220px, 40vw); height: 46px; border-radius: 23px;
-  background: rgba(18,21,24,0.45); border: 1px solid var(--line); position: relative;
+  position: relative; width: var(--rail-w); height: var(--rail-h); border-radius: calc(var(--rail-h) / 2);
+  background: rgba(18,21,24,0.45); border: 1px solid var(--line);
+  transition: transform 0.18s ease-out;
 }
+.steer-rail.held { transition: none; background: rgba(18,21,24,0.6); }
+/* Chevrons at the ends: which way to drag. */
+.steer-rail::before, .steer-rail::after {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font: 600 1.6rem/1 var(--f-display); color: var(--ink-dim);
+}
+.steer-rail::before { content: "‹"; left: 14px; }
+.steer-rail::after { content: "›"; right: 14px; }
 .steer-knob {
-  position: absolute; top: 3px; left: 50%; width: 38px; height: 38px; margin-left: -19px; border-radius: 50%;
+  position: absolute; z-index: 1; top: 50%; left: 50%; width: var(--knob); height: var(--knob);
+  margin: calc(var(--knob) / -2) 0 0 calc(var(--knob) / -2); border-radius: 50%;
   background: var(--ink); opacity: 0.85; box-shadow: 0 2px 8px rgba(0,0,0,.5);
 }
 .pad-lbl { margin-top: 6px; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); text-shadow: 0 1px 4px #000; }
@@ -131,18 +185,20 @@ body {
   position: absolute; right: 0; bottom: 0; pointer-events: auto;
   display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; gap: 10px;
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
 }
 .pedal {
-  font: 700 0.8rem var(--f-body); letter-spacing: 0.1em; color: var(--ink);
-  border: 1px solid var(--line); border-radius: 10px; background: rgba(18,21,24,0.55);
-  touch-action: none;
+  font: 700 0.9rem var(--f-body); letter-spacing: 0.1em; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 14px; background: rgba(18,21,24,0.55);
+  touch-action: none; -webkit-touch-callout: none;
 }
 .pedal.active { background: rgba(242,240,234,0.35); }
-.pedal.gas { grid-row: 1 / 3; grid-column: 2; width: 84px; height: 150px; border-color: rgba(242,194,48,.6); }
-.pedal.brake { grid-row: 2; grid-column: 1; width: 84px; height: 70px; }
-.pedal.hand { grid-row: 1; grid-column: 1; width: 84px; height: 70px; border-color: rgba(210,58,47,.7); }
-body.touch-on .dash { bottom: auto; top: calc(186px + env(safe-area-inset-top, 0px)); }
+.pedal.gas { grid-row: 1 / 3; grid-column: 2; width: var(--gas-w); height: var(--pedal-h); border-color: rgba(242,194,48,.6); }
+.pedal.brake, .pedal.hand { grid-column: 1; width: var(--pedal-w); height: calc((var(--pedal-h) - 10px) / 2); }
+.pedal.brake { grid-row: 2; }
+.pedal.hand { grid-row: 1; border-color: rgba(210,58,47,.7); }
+/* Speed between the steering and the pedals, clear of the panels up top. */
+body.touch-on .dash { right: auto; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
 body.touch-on .dash .speed { font-size: 2.6rem; }
 
 /* ---------- Menu ---------- */
@@ -229,7 +285,13 @@ body.touch-on .dash .speed { font-size: 2.6rem; }
   .angle-meter { width: 100%; gap: 4px; }
   #angleTxt { font-size: 1rem; min-width: 2.2em; }
   .hud-top { gap: 6px; }
-  .hud-btns { margin-top: 104px; }
+  .menu { padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+  .touch { --rail-w: min(300px, 40vw); --gas-w: 88px; --pedal-w: 76px; --pedal-h: 200px; }
+  /* No room between steering and pedals: the speed sits above the pedals. */
+  body.touch-on .dash {
+    left: auto; right: max(16px, env(safe-area-inset-right, 0px)); transform: none;
+    bottom: calc(238px + env(safe-area-inset-bottom, 0px));
+  }
   .brand h1 { font-size: 3.4rem; }
   .cars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .facts b { font-size: 1.25rem; }
@@ -254,7 +316,7 @@ body.touch-on .dash .speed { font-size: 2.6rem; }
   55%, 85% { transform: rotate(-90deg); }
   100% { transform: rotate(0deg); }
 }
-@media (orientation: portrait) and (pointer: coarse) {
+@media (orientation: portrait) and (pointer: coarse) and (max-width: 600px) {
   .sideways-hint { display: block; }
 }
 
@@ -284,35 +346,36 @@ body.touch-on .dash .speed { font-size: 2.6rem; }
   .angle-meter { width: min(210px, 28vw); }
   #angleTxt { font-size: 1rem; }
   .toast { font-size: 1.15rem; }
-  .hud-btns { top: calc(6px + env(safe-area-inset-top, 0px)); margin-top: 78px; gap: 10px; }
   .chip { padding: 6px 11px; }
+  .topbar { --corner-top: calc(6px + env(safe-area-inset-top, 0px)); }
 
   /* Touch: steering along the bottom left, pedals in the bottom right, speed between them. */
-  body.touch-on .touch { inset: 38% 0 0 0; height: auto; }
+  body.touch-on .touch {
+    --rail-w: min(300px, 32vw); --rail-h: 68px; --knob: 58px;
+    --gas-w: 104px; --pedal-w: 92px; --pedal-h: min(220px, 58vh);
+    inset: 30% 0 0 0; height: auto;
+  }
   body.touch-on .steer-pad {
-    width: 42%;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: 46%;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     padding-left: max(18px, env(safe-area-inset-left, 0px));
   }
-  body.touch-on .steer-rail { width: min(250px, 30vw); height: 50px; border-radius: 25px; }
-  body.touch-on .steer-knob { width: 42px; height: 42px; margin-left: -21px; }
   body.touch-on .pad-lbl { display: none; }
   body.touch-on .pedals {
-    gap: 8px;
+    gap: 10px;
     padding-right: max(18px, env(safe-area-inset-right, 0px));
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
-  body.touch-on .pedal.gas { width: 88px; height: min(156px, 44vh); }
-  body.touch-on .pedal.brake, body.touch-on .pedal.hand { width: 80px; height: calc((min(156px, 44vh) - 8px) / 2); }
-  body.touch-on .dash {
-    top: auto; right: auto; left: 50%; transform: translateX(-50%);
-    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-  }
+  body.touch-on .dash { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
   body.touch-on .dash .speed { font-size: 2.3rem; }
   body.touch-on .gear { font-size: 1.6rem; }
 
-  /* Menu: compact, so Drive is on screen without scrolling. */
-  .menu { padding-block: 10px; }
+  /* Menu: compact, so Drive is on screen without scrolling, and clear of the corner buttons. */
+  .menu {
+    padding-block: 10px;
+    padding-left: calc(max(12px, env(safe-area-inset-left, 0px)) + 54px);
+    padding-right: calc(max(12px, env(safe-area-inset-right, 0px)) + 54px);
+  }
   .menu-card { gap: 10px 22px; padding: 10px 16px 12px; }
   .menu-main, .menu-side { gap: 10px; }
   .brand h1 { font-size: 2.7rem; }

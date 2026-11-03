@@ -48,12 +48,6 @@
       </section>
     </div>
 
-    <div class="hud-btns">
-      <button id="btnPause" class="chip" type="button" aria-label="Pause">II</button>
-      <button id="btnCam" class="chip" type="button" aria-label="Change camera">CAM</button>
-      <button id="btnReset" class="chip" type="button" aria-label="Back on track">↺</button>
-    </div>
-
     <section class="dash" aria-label="Speed and gear">
       <div class="speed num"><span id="speed">0</span><small>km/h</small></div>
       <div class="gear num" id="gear">1</div>
@@ -63,7 +57,7 @@
     <!-- touch -->
     <div id="touch" class="touch" hidden>
       <div id="steerPad" class="steer-pad">
-        <div class="steer-rail"><div id="steerKnob" class="steer-knob"></div></div>
+        <div id="steerRail" class="steer-rail"><div id="steerKnob" class="steer-knob"></div></div>
         <span class="pad-lbl">Drag to steer</span>
       </div>
       <div class="pedals">
@@ -124,12 +118,30 @@
         <summary>Controls</summary>
         <dl>
           <dt>Keyboard</dt><dd>W / ↑ gas · S / ↓ brake, reverse · A D / ← → steer · Space e-brake · C camera (chase, far chase, inside, bonnet, overhead) · R back on track · P pause</dd>
-          <dt>Touch</dt><dd>Hold the phone sideways · Drag left thumb sideways to steer · Gas, brake and e-brake on the right</dd>
+          <dt>Touch</dt><dd>Hold the phone sideways · Put your left thumb down anywhere on the left and drag sideways to steer · Gas, brake and e-brake on the right · Camera, back on track and pause in the menu, top right</dd>
           <dt>Scoring</dt><dd>Points grow with slip angle and speed. Keep the slide going to raise the multiplier. A wall hit or leaving the asphalt drops the chain.</dd>
         </dl>
       </details>
 
       <p class="credits">Cars: Pro-am is “Retro Car With Interior (PSX asset)” by <a href="https://bricchi-games.itch.io/retro-car-with-interior" target="_blank" rel="noopener">Bricchi Games</a>, CC BY 4.0. AE86 is “1986 Toyota Sprinter Trueno AE86 From Initial D” by <a href="https://www.cgtrader.com/free-3d-models/car/antique-car/1986-toyota-sprinter-trueno-ae86-from-initial-d" target="_blank" rel="noopener">raddysa71arxi</a>, R32 is “Nissan Skyline R32 GTR” by <a href="https://www.cgtrader.com/free-3d-models/car/sport-car/nissan-skyline-r32-gtr-d4a3090d-61b3-4e1b-881b-9008ea7b7880" target="_blank" rel="noopener">13lue</a> and E30 is “M3 e30” by <a href="https://www.cgtrader.com/3d-models/car/sport-car/m3-e30" target="_blank" rel="noopener">fadhilelouali6</a>, all three under the CGTrader Royalty Free licence. Car and road graphics adapted from <a href="https://github.com/matapao/derby01" target="_blank" rel="noopener">derby01</a> (MIT). Track: Sogn Motorsportklubb's drift track at Kaupangerskogen, measured from <a href="https://www.openstreetmap.org/way/516158930" target="_blank" rel="noopener">OpenStreetMap</a> (© OpenStreetMap contributors, ODbL) and Esri World Imagery; heights © Kartverket (CC BY 4.0).</p>
+    </div>
+  </div>
+
+  <!-- Corners: back out of the game, and the menu -->
+  <div class="topbar">
+    <button id="btnBack" class="round" type="button" aria-label="Leave game" title="Leave game" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="topbar-menu">
+      <button id="btnMenu" class="round" type="button" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="menuSheet">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+      <div id="menuSheet" class="sheet" hidden>
+        <button id="mCam" class="sheet-item play-only" type="button">Camera <span id="mCamName">Chase</span><kbd>C</kbd></button>
+        <button id="mReset" class="sheet-item play-only" type="button">Back on track<kbd>R</kbd></button>
+        <button id="mPause" class="sheet-item play-only" type="button">Pause<kbd>P</kbd></button>
+        <button id="mRevisions" class="sheet-item" type="button" hidden>Revisions</button>
+      </div>
     </div>
   </div>
 

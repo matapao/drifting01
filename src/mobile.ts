@@ -8,7 +8,8 @@ import { startOrResume, togglePause } from './game';
 import { isTouchDevice } from './stage';
 import { app } from './state';
 
-const upright = matchMedia('(orientation: portrait)');
+/** A phone held upright. A tablet has the width to drive either way round, so it isn't asked to turn. */
+const upright = matchMedia('(orientation: portrait) and (max-width: 600px)');
 const card = byId('rotate');
 /** A drive waiting for the phone to turn: Drive tapped upright, or the phone turned upright mid-drive. */
 let waiting = false;

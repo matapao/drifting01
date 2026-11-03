@@ -152,6 +152,7 @@ export function startOrResume(): void {
     app.started = true;
   }
   app.mode = 'play';
+  document.body.classList.add('playing');
   byId('menu').hidden = true;
   byId('hud').hidden = false;
   byId('btnStart').textContent = 'Resume';
@@ -161,6 +162,7 @@ export function startOrResume(): void {
 export function togglePause(): void {
   if (app.mode === 'play') {
     app.mode = 'menu';
+    document.body.classList.remove('playing');
     byId('menu').hidden = false;
     byId('hud').hidden = true;
     suspendAudio();

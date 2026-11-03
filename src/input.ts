@@ -4,7 +4,7 @@ import { byId } from './dom';
 import { respawn, togglePause } from './game';
 import { clamp } from './math';
 import { isTouchDevice } from './stage';
-import { controls, options } from './state';
+import { app, controls, options } from './state';
 
 const keys = new Set<string>();
 const touch = { steer: 0, gas: 0, brake: 0, hand: false, active: false };
@@ -34,11 +34,14 @@ export function bindTouch(): void {
   byId('touch').hidden = false;
   document.body.classList.add('touch-on');
 
+  blockPageGestures();
+
   const pad = byId('steerPad');
+  const rail = byId('steerRail');
   const knob = byId('steerKnob');
   let pointer: number | null = null;
   let originX = 0;
-  const travel = () => (pad.querySelector('.steer-rail') as HTMLElement).clientWidth / 2 - 20;
+  const travel = () => rail.clientWidth / 2 - knob.offsetWidth / 2;
 
   // Sound picks up again on the first touch after a pause: some phones only allow it inside a tap.
   pad.addEventListener('pointerdown', (event) => {
@@ -47,6 +50,14 @@ export function bindTouch(): void {
     originX = event.clientX;
     pad.setPointerCapture(pointer);
     touch.active = true;
+    // The rail comes to the thumb, wherever on the pad it lands.
+    rail.classList.add('held');
+    rail.style.transform = '';
+    const rest = rail.getBoundingClientRect();
+    const area = pad.getBoundingClientRect();
+    const dx = clamp(event.clientX - (rest.left + rest.width / 2), area.left - rest.left, area.right - rest.right);
+    const dy = clamp(event.clientY - (rest.top + rest.height / 2), area.top - rest.top, area.bottom - rest.bottom);
+    rail.style.transform = `translate(${dx}px, ${dy}px)`;
   });
   pad.addEventListener('pointermove', (event) => {
     if (event.pointerId !== pointer) return;
@@ -59,6 +70,8 @@ export function bindTouch(): void {
       pointer = null;
       touch.steer = 0;
       knob.style.transform = '';
+      rail.classList.remove('held');
+      rail.style.transform = '';
     }
   };
   pad.addEventListener('pointerup', release);
@@ -85,6 +98,40 @@ export function bindTouch(): void {
   bindPedal('tBrake', () => (touch.brake = 1), () => (touch.brake = 0));
   bindPedal('tHand', () => (touch.hand = true), () => (touch.hand = false));
   addEventListener('contextmenu', (event) => event.preventDefault());
+}
+
+/**
+ * Safari on iPhone and iPad zooms on a double tap or a pinch whatever touch-action says, and ignores
+ * user-scalable=no. Mid-drive that throws the controls off screen. While driving, no touch outside the corner
+ * buttons starts a page gesture at all (the pedals and the pad run on pointer events, which still arrive); in
+ * the menus, a quick second tap is kept from zooming and gets its click here instead.
+ */
+function blockPageGestures(): void {
+  const native = (target: EventTarget | null) => (target as Element).closest?.('.topbar, .game-tools-panel');
+  document.addEventListener(
+    'touchstart',
+    (event) => {
+      if (app.mode === 'play' && !native(event.target)) event.preventDefault();
+    },
+    { passive: false },
+  );
+  let lastTap = 0;
+  document.addEventListener(
+    'touchend',
+    (event) => {
+      const quick = event.timeStamp - lastTap < 400;
+      lastTap = event.timeStamp;
+      if (!quick || event.touches.length || (event.target as Element).closest?.('.game-tools-panel, select')) return;
+      event.preventDefault();
+      const touchPoint = event.changedTouches[0];
+      const clickable = 'button, a[href], label, input, summary';
+      const tapped = (event.target as Element).closest?.<HTMLElement>(clickable);
+      const under = document.elementFromPoint(touchPoint.clientX, touchPoint.clientY)?.closest(clickable);
+      if (tapped && tapped === under) tapped.click();
+    },
+    { passive: false },
+  );
+  for (const type of ['gesturestart', 'gesturechange']) document.addEventListener(type, (event) => event.preventDefault());
 }
 
 let keyboardSteer = 0;

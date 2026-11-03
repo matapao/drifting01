@@ -21,7 +21,8 @@ npm run bundle    # dist/ as a zirbel bundle, drifting01-<version>.tgz
 
 - Keyboard: W or ↑ gas, S or ↓ brake and reverse, A D or ← → steer, Space e-brake, C camera, R back on
   track, P pause, M sound.
-- Touch: drag the left thumb sideways to steer; gas, brake and e-brake are on the right.
+- Touch: put the left thumb down anywhere on the left and drag sideways to steer; gas, brake and e-brake
+  are on the right. The menu in the top right corner has the camera, back on track and pause.
 
 ## Cars
 

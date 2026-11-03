@@ -1,13 +1,13 @@
 import { applySoundOption } from './audio';
-import { cycleCamera } from './camera';
 import { buildCar, CAR_COLOURS, carStyle, loadCar, setCarStyle } from './car-model';
 import { CAR_STYLES } from './car-style';
 import { CARS } from './cars';
 import { byId } from './dom';
-import { resetSession, respawn, togglePause } from './game';
+import { resetSession } from './game';
 import { drive, watchOrientation } from './mobile';
 import { applyShadows } from './stage';
 import { options, store } from './state';
+import { initTopbar } from './topbar';
 import { track } from './track';
 
 type Toggle = 'assist' | 'sound' | 'shadows';
@@ -129,9 +129,7 @@ export function initMenu(): void {
 
   byId('btnStart').addEventListener('click', () => void drive());
   watchOrientation();
-  byId('btnPause').addEventListener('click', togglePause);
-  byId('btnCam').addEventListener('click', cycleCamera);
-  byId('btnReset').addEventListener('click', () => respawn());
+  initTopbar();
 
   byId('factLen').textContent = `${Math.round(track.length)} m`;
   byId('factWidth').textContent = `${Math.round(track.avgWidth)} m`;
