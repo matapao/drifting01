@@ -107,7 +107,7 @@ const LOOKS: Record<string, DriftLook> = {
   r32: {
     rim: [0x9a6a35, 0.3, 0.36],
     cage: 0xf2c230,
-    banner: 'KAUPANGER',
+    banner: 'DRIFTING01',
     number: '32',
     wing: { posts: 0.2, chord: 0.28, span: 0.88, plates: true },
     camber: [-6, -1.5],
