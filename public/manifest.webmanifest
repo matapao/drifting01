@@ -1,7 +1,7 @@
 {
   "name": "drifting01",
   "short_name": "drifting01",
-  "description": "Drift Sogn Motorsportklubb's track at Kaupangerskogen.",
+  "description": "A drifting game: hold the slide and chain the points.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

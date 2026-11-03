@@ -2,7 +2,7 @@
   "id": "drifting01",
   "version": "0.1.0",
   "title": "DRIFTING01",
-  "tagline": "Drift Sogn Motorsportklubb's track at Kaupangerskogen.",
+  "tagline": "A drifting game: hold the slide and chain the points.",
   "players": { "min": 1, "max": 1 },
   "entry": "index.html",
   "runsOn": "Phones, tablets and computers",
@@ -70,9 +70,9 @@
     }
   ],
   "back": [
-    "Drift the real club track at Kaupangerskogen in Sogndal, measured from the map and the terrain model.",
+    "A drifting game: get the car sideways, hold the slide and chain the points.",
     "Pick a Pro-am build, an AE86, an R32 or an E30, in stock trim or drift styling.",
-    "Hold the slide through eleven corners and chain the points as the multiplier climbs.",
+    "The wider and faster the slide, the more it scores, and the multiplier climbs while you hold it.",
     "Drive from behind, from the bonnet, or from the driver's seat with the wheel turning in your hands.",
     "Play with keys or touch, with the phone held sideways."
   ]

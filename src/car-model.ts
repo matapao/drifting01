@@ -2,6 +2,7 @@ import {
   Box3,
   BoxGeometry,
   type BufferGeometry,
+  CircleGeometry,
   Color,
   DoubleSide,
   Group,
@@ -10,6 +11,7 @@ import {
   Mesh,
   MeshStandardMaterial,
   Quaternion,
+  RingGeometry,
   SRGBColorSpace,
   type Texture,
   TextureLoader,
@@ -240,6 +242,37 @@ const FINISHES: Record<Exclude<Finish, 'paint'>, MeshStandardMaterial> = {
   bronze: new MeshStandardMaterial({ color: 0x7a5530, roughness: 0.35, metalness: 0.7 }),
 };
 
+/**
+ * The back of every wheel, closed: several models leave the inside of the rim open, so a wheel turned
+ * towards the camera showed its bare metal barrel. A rubber sidewall and, inside it, a dark plate where the
+ * brake would be, flush so no metal shows between them; unit sized and scaled to each wheel, and only seen
+ * where the model has nothing of its own.
+ */
+const WHEEL_BACK = {
+  sidewall: new RingGeometry(0.68, 0.985, 40).rotateY(Math.PI / 2),
+  plate: new CircleGeometry(0.685, 40).rotateY(Math.PI / 2),
+  rubber: new MeshStandardMaterial({ color: 0x161616, roughness: 0.92, side: DoubleSide }),
+  steel: new MeshStandardMaterial({ color: 0x232427, roughness: 0.7, metalness: 0.3, side: DoubleSide }),
+};
+
+function closeWheel(wheel: Mesh, side: number): void {
+  if (!wheel.geometry.boundingBox) wheel.geometry.computeBoundingBox();
+  const box = wheel.geometry.boundingBox as Box3;
+  const radius = Math.max(box.max.y - box.min.y, box.max.z - box.min.z) / 2;
+  const cy = (box.min.y + box.max.y) / 2,
+    cz = (box.min.z + box.max.z) / 2;
+  // The inner face is the one towards the middle of the car; a centimetre in, behind any sidewall it has.
+  const inward = side > 0 ? -1 : 1;
+  const face = (inward < 0 ? box.min.x : box.max.x) - inward * 0.012;
+  const sidewall = new Mesh(WHEEL_BACK.sidewall, WHEEL_BACK.rubber);
+  sidewall.position.set(face, cy, cz);
+  sidewall.scale.setScalar(radius);
+  const plate = new Mesh(WHEEL_BACK.plate, WHEEL_BACK.steel);
+  plate.position.set(face - inward * 0.001, cy, cz);
+  plate.scale.setScalar(radius);
+  wheel.add(sidewall, plate);
+}
+
 type CarVisual = { kind: 'retro'; asset: CarAsset } | { kind: 'packed'; car: PackedCar } | { kind: 'box' };
 
 /** Each car's model is fetched the first time it's picked, then kept. */
@@ -449,6 +482,7 @@ function mountWheel(i: number, at: Vector3, wheel: Mesh, hub: Mesh | null, drift
     tilt.rotation.z = camberOf(visualId, i, at.x);
   }
   group.add(tilt);
+  closeWheel(wheel, at.x);
   tilt.add(wheel);
   if (hub) tilt.add(hub);
   rig.body.add(group);

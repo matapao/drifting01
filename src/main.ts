@@ -29,6 +29,7 @@ declare global {
       respawn: typeof respawn;
       surfaceAt: typeof surfaceAt;
       solidAt: typeof solidAt;
+      view: { renderer: typeof renderer; scene: typeof scene; camera: typeof camera };
     };
   }
 }
@@ -106,7 +107,17 @@ async function boot(): Promise<void> {
   applyShadows();
   loadMsg.textContent = `Lap ${Math.round(track.length)} m.`;
 
-  window.__drift = { st: car, game, TRK: track, input: controls, physicsStep, respawn, surfaceAt, solidAt };
+  window.__drift = {
+    st: car,
+    game,
+    TRK: track,
+    input: controls,
+    physicsStep,
+    respawn,
+    surfaceAt,
+    solidAt,
+    view: { renderer, scene, camera },
+  };
   requestAnimationFrame(frame);
 }
 
