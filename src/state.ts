@@ -1,4 +1,5 @@
 // Shared mutable state. Plain data only, so every other module can import it without cycles.
+import { LAP_DIRECTION } from './track-data';
 
 export type SurfaceKind = 'tarmac' | 'kerb' | 'gravel' | 'grass';
 /** What the car can hit: the three kinds of barrier, a building, or the hillside and anything else solid. */
@@ -78,6 +79,10 @@ export const store = {
   },
 };
 
+/** Where a car's best lap or best score is kept: apart for each way round, as the times don't compare. */
+export const recordKey = (kind: 'lap' | 'score', car: string): string =>
+  `kaupanger.${LAP_DIRECTION < 0 ? 'clockwise.' : ''}${kind}.${car}`;
+
 export const options = { assist: true, sound: true, shadows: true, color: 0, car: 'retro' };
 Object.assign(options, store.get('opt', {}));
 
@@ -100,10 +105,10 @@ export const game = {
   lapStart: null as number | null,
   lap: 1,
   sec: [false, false],
-  best: store.get<number | null>('kaupanger.lap.' + options.car, null),
+  best: store.get<number | null>(recordKey('lap', options.car), null),
   last: null as number | null,
   lapScore: 0,
-  bestScore: store.get<number | null>('kaupanger.score.' + options.car, null),
+  bestScore: store.get<number | null>(recordKey('score', options.car), null),
   chain: null as Chain | null,
   offT: 0,
   now: 0,

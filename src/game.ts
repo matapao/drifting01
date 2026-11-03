@@ -4,16 +4,17 @@ import { byId } from './dom';
 import { skids } from './effects';
 import { flashChainLost, formatTime, showToast } from './hud';
 import { viewCanvas } from './stage';
-import { app, car, game, options, store } from './state';
-import { nearestOnTrack, track } from './track';
+import { app, car, game, options, recordKey, store } from './state';
+import { lapHeading, nearestOnTrack, track } from './track';
+import { LAP_DIRECTION } from './track-data';
 
 /** Puts the car on the centreline: at the nearest point, or on the grid before the start line. */
 export function respawn(toGrid = false): void {
   const n = track.N;
-  const i = toGrid ? (game.startIdx - 30 + n) % n : nearestOnTrack(car.x, car.z).i;
+  const i = toGrid ? (game.startIdx - 30 * LAP_DIRECTION + n) % n : nearestOnTrack(car.x, car.z).i;
   car.x = track.X[i];
   car.z = track.Z[i];
-  car.th = Math.atan2(track.TX[i], track.TZ[i]);
+  car.th = lapHeading(i);
   car.vx = car.vz = car.r = car.delta = 0;
   car.gear = 1;
   car.spin = 0;
@@ -39,7 +40,8 @@ export function updateLap(): void {
   game.idx = nearest.i;
   game.lat = nearest.lat;
 
-  const fromStart = (i: number) => (i - game.startIdx + n) % n;
+  // Stations past the start line, counted the way the lap runs.
+  const fromStart = (i: number) => ((i - game.startIdx) * LAP_DIRECTION + n) % n;
   const before = fromStart(prevIdx);
   const after = fromStart(nearest.i);
   if (after > n * 0.3 && after < n * 0.45) game.sec[0] = true;
@@ -59,11 +61,11 @@ export function updateLap(): void {
       const valid = game.lapValid;
       if (valid && (game.best === null || time < game.best)) {
         game.best = time;
-        store.set('kaupanger.lap.' + options.car, time);
+        store.set(recordKey('lap', options.car), time);
       }
       if (game.bestScore === null || game.lapScore > game.bestScore) {
         game.bestScore = Math.round(game.lapScore);
-        store.set('kaupanger.score.' + options.car, game.bestScore);
+        store.set(recordKey('score', options.car), game.bestScore);
       }
       showToast(`Lap ${game.lap}  ${formatTime(time)}  ·  ${Math.round(game.lapScore)} pts${valid ? '' : '  (reset used)'}`);
       game.lap++;
@@ -135,8 +137,8 @@ export function resetSession(): void {
   game.chain = null;
   game.lapValid = true;
   game.sec = [false, false];
-  game.best = store.get<number | null>('kaupanger.lap.' + options.car, null);
-  game.bestScore = store.get<number | null>('kaupanger.score.' + options.car, null);
+  game.best = store.get<number | null>(recordKey('lap', options.car), null);
+  game.bestScore = store.get<number | null>(recordKey('score', options.car), null);
   app.started = false;
   prepareEngine(options.car);
   respawn(true);

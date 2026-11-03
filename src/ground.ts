@@ -12,6 +12,7 @@ import {
   PAINT_SCALE,
   photoX,
   photoZ,
+  LAP_DIRECTION,
   SIDE_ROAD,
   START_LINE_CP,
 } from './track-data';
@@ -407,8 +408,8 @@ function paintStartLine(
   ctx.stroke();
 
   // Two rows of chequers just past the line.
-  const tx = track.TX[i];
-  const tz = track.TZ[i];
+  const tx = track.TX[i] * LAP_DIRECTION;
+  const tz = track.TZ[i] * LAP_DIRECTION;
   const nx = track.NX[i];
   const nz = track.NZ[i];
   const halfWidth = track.HW[i];

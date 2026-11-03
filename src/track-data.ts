@@ -125,10 +125,10 @@ export const KERB_STROKES: readonly (readonly PhotoPoint[])[] = [
 ];
 
 export interface Barrier {
-  /** Start and end, in metres along the lap from the start line. */
+  /** Start and end, in metres from the start line the way the centreline was traced. */
   from: number;
   to: number;
-  /** -1 is the driver's right, 1 the left. The lap runs anticlockwise, so -1 is mostly the outside. */
+  /** -1 is the right, 1 the left, looking the way the centreline was traced: anticlockwise, so -1 is mostly the outside. */
   side: number;
   /** Distance outside the track edge, in metres. */
   off: number;
@@ -162,7 +162,7 @@ export const WALLS: readonly { kind: 'concrete' | 'tyres'; points: readonly Phot
   { kind: 'tyres', points: [[379, 476], [390, 486], [400, 500], [407, 514], [409, 521]] },
 ];
 
-/** Spectator fences on the hillside behind the guardrail, as [from, to] metres along the lap, on the right. */
+/** Spectator fences on the hillside behind the guardrail, as [from, to] metres along the trace, on its right. */
 export const SPECTATOR_FENCES: readonly (readonly [from: number, to: number])[] = [[405, 80]];
 
 /** The public road crossing the map. */
@@ -197,6 +197,8 @@ export const BUILDINGS: readonly Building[] = [
 
 /** Where the start line sits along the centreline, in control points. */
 export const START_LINE_CP = 0;
+/** Which way the lap runs: 1 the way the centreline was traced (anticlockwise on the map), -1 against it (clockwise). */
+export const LAP_DIRECTION: 1 | -1 = -1;
 
 export const GROUND_COLOURS = { lot: '#7c7f83', road: '#606367', pave: '#9c9b96', grass: '#5d8a3a' };
 export const EDGE_LINE_COLOUR = '#c9c7c0';

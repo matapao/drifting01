@@ -1,5 +1,5 @@
 import { lerp, TAU } from './math';
-import { CENTRELINE, KERB_STROKES, photoX, photoZ, START_LINE_CP, WIDTH_PER_PX } from './track-data';
+import { CENTRELINE, KERB_STROKES, LAP_DIRECTION, photoX, photoZ, START_LINE_CP, WIDTH_PER_PX } from './track-data';
 
 export type Vec2 = [x: number, z: number];
 
@@ -182,7 +182,10 @@ export const edgePoint = (i: number, side: number, extra = 0): Vec2 => {
   return [track.X[i] + track.NX[i] * offset * side, track.Z[i] + track.NZ[i] * offset * side];
 };
 
-/** The station `metres` along the lap from the start line. */
+/** The heading of a car driving the lap at station `i`. */
+export const lapHeading = (i: number): number => Math.atan2(track.TX[i] * LAP_DIRECTION, track.TZ[i] * LAP_DIRECTION);
+
+/** The station `metres` from the start line the way the centreline was traced, whichever way the lap runs. */
 export function stationAt(metres: number): number {
   const along = ((metres % track.length) + track.length) % track.length;
   return (track.idxOfCP(START_LINE_CP) + Math.round((along / track.length) * track.N)) % track.N;
